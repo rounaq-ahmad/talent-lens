@@ -1,0 +1,30 @@
+<div class="question-body">
+  <p class="question-text">{{ question().question }}</p>
+
+  @if (question().format === 'mcq' && question().options) {
+    <div class="options-list">
+      @for (option of question().options!; track $index) {
+        <button
+          class="option"
+          [class.selected]="answer() === $index"
+          (click)="selectOption($index)"
+          type="button"
+        >
+          <span class="option-letter">{{ 'ABCD'[$index] }}</span>
+          <span class="option-text">{{ option }}</span>
+        </button>
+      }
+    </div>
+  }
+
+  @if (question().format === 'open-ended') {
+    <textarea
+      class="open-answer"
+      placeholder="Type your answer here..."
+      [value]="answer() ?? ''"
+      (input)="onTextChange($any($event.target).value)"
+      rows="8"
+    ></textarea>
+    <p class="char-hint">Write a thorough explanation — your answer will be reviewed manually.</p>
+  }
+</div>

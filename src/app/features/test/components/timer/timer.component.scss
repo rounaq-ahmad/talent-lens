@@ -1,0 +1,35 @@
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+  transition: background 0.3s, color 0.3s;
+
+  &.warning {
+    background: #fef3c7;
+    border-color: #f59e0b;
+    color: #92400e;
+  }
+
+  &.danger {
+    background: #fee2e2;
+    border-color: #ef4444;
+    color: #991b1b;
+    animation: pulse 1s infinite;
+  }
+}
+
+.timer-icon {
+  font-size: 1rem;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}

@@ -1,0 +1,26 @@
+<div class="question-body">
+  <p class="question-text">{{ question().question }}</p>
+
+  <div class="code-block-wrapper">
+    <div class="code-header">
+      <span class="code-lang">{{ question().language }}</span>
+    </div>
+    <pre><code #codeBlock [class]="'language-' + question().language"></code></pre>
+  </div>
+
+  <p class="options-label">What is the output?</p>
+
+  <div class="options-list">
+    @for (option of question().options; track $index) {
+      <button
+        class="option"
+        [class.selected]="answer() === $index"
+        (click)="selectOption($index)"
+        type="button"
+      >
+        <span class="option-letter">{{ 'ABCD'[$index] }}</span>
+        <code class="option-code">{{ option }}</code>
+      </button>
+    }
+  </div>
+</div>

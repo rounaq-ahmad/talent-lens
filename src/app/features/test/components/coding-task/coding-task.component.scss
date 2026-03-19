@@ -1,0 +1,109 @@
+.coding-task {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.task-description {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  line-height: 1.75;
+
+  :global(code) {
+    background: var(--bg-subtle);
+    padding: 0.1em 0.4em;
+    border-radius: 4px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.875em;
+  }
+
+  :global(pre) {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+
+    :global(code) {
+      background: transparent;
+      padding: 0;
+    }
+  }
+
+  :global(strong) {
+    font-weight: 600;
+  }
+}
+
+.hints-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.hints-toggle {
+  align-self: flex-start;
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--primary);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--primary);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: rgba(99, 102, 241, 0.08);
+  }
+}
+
+.hints-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  background: var(--bg-subtle);
+  border-left: 3px solid var(--primary);
+  border-radius: 0 8px 8px 0;
+  padding: 0.75rem 1rem 0.75rem 1.5rem;
+
+  li {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+
+    & + li {
+      margin-top: 0.35rem;
+    }
+  }
+}
+
+.editor-wrapper {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #2d2d2d;
+}
+
+.editor-header {
+  background: #1e1e1e;
+  padding: 0.4rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.editor-lang {
+  font-size: 0.75rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: monospace;
+}
+
+.editor-note {
+  font-size: 0.75rem;
+  color: #555;
+}
+
+.editor-container {
+  height: 400px;
+  width: 100%;
+}

@@ -1,0 +1,22 @@
+<div class="submitted-page">
+  <div class="submitted-card">
+    <div class="icon-circle">
+      <span class="check-icon">&#10003;</span>
+    </div>
+
+    <h1>Test Submitted!</h1>
+    <p class="sub">Thank you, <strong>{{ candidateName() }}</strong>.</p>
+    <p class="detail">
+      You answered <strong>{{ answeredCount() }}</strong> of
+      <strong>{{ totalQuestions() }}</strong> questions.
+    </p>
+    <p class="note">
+      Your responses have been recorded. Results will be reviewed by the interviewer
+      and you will be contacted with feedback.
+    </p>
+
+    <button class="btn btn-primary" (click)="goHome()" type="button">
+      Back to Home
+    </button>
+  </div>
+</div>

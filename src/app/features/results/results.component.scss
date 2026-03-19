@@ -1,0 +1,241 @@
+.results-page {
+  min-height: 100vh;
+  background: var(--bg-page);
+}
+
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  h1 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+  }
+}
+
+.results-body {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.score-card {
+  padding: 1.75rem;
+}
+
+.score-info {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0.2rem;
+}
+
+.name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.score-display {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.score-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: conic-gradient(var(--primary) 0%, var(--bg-subtle) 0%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 4px solid var(--primary);
+}
+
+.score-pct {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.score-fraction {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.grade-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  &.grade-excellent { background: rgba(16,185,129,0.15); color: #065f46; }
+  &.grade-good      { background: rgba(99,102,241,0.15); color: #3730a3; }
+  &.grade-average   { background: rgba(245,158,11,0.15); color: #92400e; }
+  &.grade-poor      { background: rgba(239,68,68,0.15);  color: #991b1b; }
+}
+
+.manual-note {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
+.breakdown h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.question-result {
+  padding: 1.25rem 1.5rem;
+  border-left: 4px solid var(--border);
+
+  &.correct   { border-left-color: var(--success); }
+  &.incorrect { border-left-color: var(--danger); }
+  &.manual    { border-left-color: #f59e0b; }
+
+  & + & {
+    margin-top: 0.75rem;
+  }
+}
+
+.qr-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.qr-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.q-num {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.result-icon {
+  font-size: 1rem;
+  font-weight: 700;
+
+  .correct &, &:has(+ .correct) { color: var(--success); }
+}
+
+.question-result.correct .result-icon { color: var(--success); }
+.question-result.incorrect .result-icon { color: var(--danger); }
+
+.manual-badge {
+  font-size: 0.75rem;
+  background: rgba(245,158,11,0.1);
+  color: #92400e;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.points {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.qr-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.answer-display {
+  font-size: 0.875rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.answer-label {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.answer-value {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.code-answer {
+  background: var(--bg-subtle);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: var(--text-primary);
+  max-height: 200px;
+  overflow-y: auto;
+  margin: 0;
+}
+
+.no-answer {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.explanation {
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  background: rgba(99,102,241,0.07);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.type-badge {
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+
+  &.type-theoretical   { background: rgba(99,102,241,0.1); color: var(--primary); }
+  &.type-code-snippet  { background: rgba(245,158,11,0.1); color: #d97706; }
+  &.type-coding-task   { background: rgba(16,185,129,0.1); color: var(--success); }
+}

@@ -1,0 +1,145 @@
+<form class="question-form" (ngSubmit)="onSubmit()" #f="ngForm">
+
+  <!-- Shared Fields -->
+  <div class="form-section">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Question Type</label>
+        <select [ngModel]="type()" (ngModelChange)="type.set($any($event))" name="type">
+          <option value="theoretical">Theoretical</option>
+          <option value="code-snippet">Code Snippet</option>
+          <option value="coding-task">Coding Task</option>
+        </select>
+      </div>
+      <div class="form-group form-group--sm">
+        <label>Points</label>
+        <input type="number" [ngModel]="points()" (ngModelChange)="points.set($event)" name="points" min="1" max="100" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Title</label>
+      <input type="text" [ngModel]="title()" (ngModelChange)="title.set($event)" name="title" placeholder="Short title (e.g. 'Event Loop', 'Flatten Array')" required />
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- THEORETICAL -->
+  @if (type() === 'theoretical') {
+    <div class="form-section">
+      <div class="form-group">
+        <label>Format</label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" [ngModel]="thFormat()" (ngModelChange)="thFormat.set($any($event))" name="thFormat" value="mcq" />
+            Multiple Choice
+          </label>
+          <label class="radio-label">
+            <input type="radio" [ngModel]="thFormat()" (ngModelChange)="thFormat.set($any($event))" name="thFormat" value="open-ended" />
+            Open-Ended
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Question</label>
+        <textarea [ngModel]="thQuestion()" (ngModelChange)="thQuestion.set($event)" name="thQuestion" rows="3" placeholder="Write the question..." required></textarea>
+      </div>
+
+      @if (thFormat() === 'mcq') {
+        <div class="form-group">
+          <label>Options (select the correct answer)</label>
+          <div class="options-editor">
+            @for (opt of thOptions(); track $index) {
+              <div class="option-row">
+                <input type="radio" [ngModel]="thCorrect()" (ngModelChange)="thCorrect.set($event)" name="thCorrect" [value]="$index" />
+                <span class="opt-letter">{{ 'ABCD'[$index] }}</span>
+                <input type="text" [ngModel]="opt" (ngModelChange)="onThOptionChange($index, $event)" [name]="'thOpt' + $index" placeholder="Option {{ 'ABCD'[$index] }}" />
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- CODE SNIPPET -->
+  @if (type() === 'code-snippet') {
+    <div class="form-section">
+      <div class="form-group">
+        <label>Question</label>
+        <input type="text" [ngModel]="csQuestion()" (ngModelChange)="csQuestion.set($event)" name="csQuestion" placeholder="e.g. 'What is the output of the following code?'" required />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Language</label>
+          <select [ngModel]="csLanguage()" (ngModelChange)="csLanguage.set($event)" name="csLanguage">
+            <option value="javascript">JavaScript</option>
+            <option value="typescript">TypeScript</option>
+            <option value="html">HTML</option>
+            <option value="css">CSS</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Code Snippet</label>
+        <textarea class="code-textarea" [ngModel]="csCode()" (ngModelChange)="csCode.set($event)" name="csCode" rows="8" placeholder="Paste the code snippet here..." spellcheck="false" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Options (select the correct answer)</label>
+        <div class="options-editor">
+          @for (opt of csOptions(); track $index) {
+            <div class="option-row">
+              <input type="radio" [ngModel]="csCorrect()" (ngModelChange)="csCorrect.set($event)" name="csCorrect" [value]="$index" />
+              <span class="opt-letter">{{ 'ABCD'[$index] }}</span>
+              <input type="text" [ngModel]="opt" (ngModelChange)="onCsOptionChange($index, $event)" [name]="'csOpt' + $index" placeholder="Option {{ 'ABCD'[$index] }}" />
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Explanation (optional)</label>
+        <textarea [ngModel]="csExplanation()" (ngModelChange)="csExplanation.set($event)" name="csExplanation" rows="2" placeholder="Brief explanation of the correct answer..."></textarea>
+      </div>
+    </div>
+  }
+
+  <!-- CODING TASK -->
+  @if (type() === 'coding-task') {
+    <div class="form-section">
+      <div class="form-group">
+        <label>Language</label>
+        <select [ngModel]="ctLanguage()" (ngModelChange)="ctLanguage.set($any($event))" name="ctLanguage">
+          <option value="javascript">JavaScript</option>
+          <option value="typescript">TypeScript</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Description (supports Markdown)</label>
+        <textarea [ngModel]="ctDescription()" (ngModelChange)="ctDescription.set($event)" name="ctDescription" rows="6" placeholder="Describe the task. You can use **bold**, `code`, and code blocks." required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Starter Code</label>
+        <textarea class="code-textarea" [ngModel]="ctStarterCode()" (ngModelChange)="ctStarterCode.set($event)" name="ctStarterCode" rows="8" placeholder="Provide starter/boilerplate code..." spellcheck="false"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Hints (one per line, optional)</label>
+        <textarea [ngModel]="ctHints()" (ngModelChange)="ctHints.set($event)" name="ctHints" rows="3" placeholder="Think recursively.&#10;Use Array.isArray() to check each element."></textarea>
+      </div>
+    </div>
+  }
+
+  <div class="form-footer">
+    <button class="btn btn-ghost" type="button" (click)="onCancel()">Cancel</button>
+    <button class="btn btn-primary" type="submit">Save Question</button>
+  </div>
+
+</form>

@@ -1,0 +1,26 @@
+<div class="coding-task">
+  <div class="task-description" [innerHTML]="question().description | descriptionHtml"></div>
+
+  @if (question().hints?.length) {
+    <div class="hints-section">
+      <button class="hints-toggle" (click)="toggleHints()" type="button">
+        {{ showHints() ? 'Hide Hints' : 'Show Hints (' + question().hints!.length + ')' }}
+      </button>
+      @if (showHints()) {
+        <ul class="hints-list">
+          @for (hint of question().hints!; track $index) {
+            <li>{{ hint }}</li>
+          }
+        </ul>
+      }
+    </div>
+  }
+
+  <div class="editor-wrapper">
+    <div class="editor-header">
+      <span class="editor-lang">{{ question().language }}</span>
+      <span class="editor-note">Your code will be submitted as-is</span>
+    </div>
+    <div #editorContainer class="editor-container"></div>
+  </div>
+</div>

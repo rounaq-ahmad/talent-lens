@@ -1,0 +1,95 @@
+@if (result) {
+  <div class="results-page">
+
+    <header class="results-header">
+      <h1>Test Results</h1>
+      <button class="btn btn-ghost" (click)="retakeTest()">&#8592; Back to Home</button>
+    </header>
+
+    <div class="results-body">
+
+      <!-- Score Card -->
+      <div class="score-card card">
+        <div class="score-info">
+          <div class="candidate">
+            <p class="label">Candidate</p>
+            <p class="name">{{ result.session.candidateName }}</p>
+          </div>
+          <div class="time-info">
+            <p class="label">Started</p>
+            <p>{{ formatTime(result.session.startTime) }}</p>
+          </div>
+          <div class="time-info">
+            <p class="label">Submitted</p>
+            <p>{{ formatTime(result.session.endTime) }}</p>
+          </div>
+        </div>
+
+        <div class="score-display">
+          <div class="score-circle">
+            <span class="score-pct">{{ result.percentage }}%</span>
+          </div>
+          <div>
+            <p class="score-fraction">{{ result.totalScore }} / {{ result.maxScore }} points (auto-graded)</p>
+            <span class="grade-badge" [class]="getGrade(result.percentage).cls">
+              {{ getGrade(result.percentage).label }}
+            </span>
+            <p class="manual-note">* Open-ended and coding tasks require manual grading.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question Breakdown -->
+      <div class="breakdown">
+        <h2>Question Breakdown</h2>
+
+        @for (qr of result.questionResults; track qr.question.id; let i = $index) {
+          <div class="question-result card" [class]="resultClass(qr)">
+            <div class="qr-header">
+              <div class="qr-meta">
+                <span class="q-num">Q{{ i + 1 }}</span>
+                <span class="type-badge type-{{ qr.question.type }}">{{ typeLabel(qr.question.type) }}</span>
+                @if (isAutoGraded(qr)) {
+                  <span class="result-icon">
+                    {{ qr.isCorrect ? '&#10003;' : '&#10007;' }}
+                  </span>
+                } @else {
+                  <span class="manual-badge">Manual Review</span>
+                }
+              </div>
+              <span class="points">{{ qr.score }} / {{ qr.question.points }} pts</span>
+            </div>
+
+            <p class="qr-title">{{ qr.question.title }}</p>
+
+            @if (qr.answer?.answer !== null && qr.answer?.answer !== undefined) {
+              <div class="answer-display">
+                <span class="answer-label">Answer submitted:</span>
+                @if (qr.question.type === 'theoretical' && qr.question.format === 'mcq') {
+                  <span class="answer-value">
+                    {{ qr.question.options![$any(qr.answer!.answer)] }}
+                  </span>
+                } @else if (qr.question.type === 'code-snippet') {
+                  <span class="answer-value">
+                    {{ qr.question.options[$any(qr.answer!.answer)] }}
+                  </span>
+                } @else {
+                  <pre class="code-answer">{{ qr.answer!.answer }}</pre>
+                }
+              </div>
+            } @else {
+              <p class="no-answer">Not answered</p>
+            }
+
+            @if (qr.question.type === 'code-snippet' && qr.question.explanation) {
+              <div class="explanation">
+                <strong>Explanation:</strong> {{ qr.question.explanation }}
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+    </div>
+  </div>
+}

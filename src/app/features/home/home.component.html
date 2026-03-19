@@ -1,0 +1,180 @@
+<div class="home-page">
+  <div class="split-layout">
+
+    <!-- ── Left: Branding Panel ── -->
+    <div class="brand-panel">
+      <div class="brand-content">
+
+        <div class="brand-logo">
+          <svg class="brand-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" rx="10" fill="rgba(255,255,255,0.12)"/>
+            <path d="M20 8L32 13V21C32 27.6 26.8 33.7 20 35.5C13.2 33.7 8 27.6 8 21V13L20 8Z" fill="rgba(255,255,255,0.9)" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+            <path d="M15 20L18.5 23.5L25 17" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="brand-name">TalentLens</span>
+        </div>
+
+        <h1 class="brand-title">TalentLens Assessment Platform</h1>
+        <p class="brand-subtitle">
+          A structured, timed evaluation covering Angular, JavaScript, HTML & CSS — from theory to live coding.
+        </p>
+
+        <div class="brand-stats">
+          <div class="brand-stat">
+            <span class="brand-stat-value">{{ settingsService.requireCode() ? settingsService.activeQuestionCount() : questionService.activeQuestions().length }}</span>
+            <span class="brand-stat-label">Questions</span>
+          </div>
+          <div class="brand-stat-divider"></div>
+          <div class="brand-stat">
+            <span class="brand-stat-value">3</span>
+            <span class="brand-stat-label">Question Types</span>
+          </div>
+        </div>
+
+        <div class="assessment-types">
+          <div class="a-type">
+            <span class="a-type-icon">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            </span>
+            <div>
+              <p class="a-type-title">Theory Questions</p>
+              <p class="a-type-desc">MCQ &amp; open-ended conceptual questions</p>
+            </div>
+          </div>
+          <div class="a-type">
+            <span class="a-type-icon">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+            </span>
+            <div>
+              <p class="a-type-title">Code Snippets</p>
+              <p class="a-type-desc">Predict the output of real JS code</p>
+            </div>
+          </div>
+          <div class="a-type">
+            <span class="a-type-icon">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>
+            </span>
+            <div>
+              <p class="a-type-title">Coding Tasks</p>
+              <p class="a-type-desc">Write solutions in a live code editor</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="brand-topics">
+          <span>Angular</span>
+          <span>JavaScript</span>
+          <span>HTML</span>
+          <span>CSS</span>
+          <span>RxJS</span>
+          <span>Redux</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Right: Form Panel ── -->
+    <div class="form-panel">
+      <div class="form-content">
+
+        <div class="form-header">
+          <h2>Start Your Assessment</h2>
+          <p>Fill in your details below and begin when ready.</p>
+        </div>
+
+        @if (settingsService.requireCode()) {
+          <div class="form-group">
+            <label for="code">Access Code</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+              <input
+                id="code"
+                type="text"
+                [(ngModel)]="accessCode"
+                placeholder="Enter your access code"
+                [class.error]="nameError()"
+                (input)="nameError.set(false); startError.set('')"
+                style="text-transform: uppercase; letter-spacing: 0.15em;"
+              />
+            </div>
+            @if (nameError()) {
+              <span class="field-error">Please enter your access code to continue.</span>
+            }
+            @if (startError()) {
+              <span class="field-error">{{ startError() }}</span>
+            }
+          </div>
+        } @else {
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+              <input
+                id="name"
+                type="text"
+                [(ngModel)]="candidateName"
+                placeholder="e.g. John Smith"
+                [class.error]="nameError()"
+                (input)="nameError.set(false); startError.set('')"
+              />
+            </div>
+            @if (nameError()) {
+              <span class="field-error">Please enter your name to continue.</span>
+            }
+            @if (startError()) {
+              <span class="field-error">{{ startError() }}</span>
+            }
+          </div>
+        }
+
+        <div class="session-summary">
+          <div class="summary-row">
+            <span class="summary-key">Questions</span>
+            <span class="summary-val">{{ settingsService.requireCode() ? settingsService.activeQuestionCount() : questionService.activeQuestions().length }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-key">Time Limit</span>
+            <span class="summary-val">{{ settingsService.durationMinutes() }} minutes</span>
+          </div>
+        </div>
+
+        <button class="btn-start" (click)="requestStart()" [disabled]="starting()">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
+          Begin Assessment
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+
+  @if (showConfirm()) {
+    <div class="confirm-overlay" (click)="cancelStart()">
+      <div class="confirm-modal" (click)="$event.stopPropagation()">
+        <div class="confirm-icon">&#9654;</div>
+        <h3>Ready to Begin?</h3>
+        <p class="confirm-name">{{ candidateName }}</p>
+        <div class="confirm-details">
+          <div class="confirm-row">
+            <span>Questions</span>
+            <strong>{{ settingsService.requireCode() ? settingsService.activeQuestionCount() : questionService.activeQuestions().length }}</strong>
+          </div>
+          <div class="confirm-row">
+            <span>Time Limit</span>
+            <strong>{{ settingsService.durationMinutes() }} minutes</strong>
+          </div>
+        </div>
+        <p class="confirm-note">
+          Once started, the timer cannot be paused. Make sure you are ready.
+        </p>
+        <div class="confirm-actions">
+          <button class="btn btn-ghost" (click)="cancelStart()" type="button">Go Back</button>
+          <button class="btn-start confirm-start-btn" (click)="confirmStart()" [disabled]="starting()" type="button">
+            @if (starting()) { Starting… } @else { Start Test }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

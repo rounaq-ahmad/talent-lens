@@ -1,0 +1,121 @@
+/* Highlight.js theme for code snippets */
+@import 'highlight.js/styles/github-dark.css';
+
+/* Design tokens */
+:root {
+  --primary:        #6366f1;
+  --primary-dark:   #4f46e5;
+  --success:        #10b981;
+  --danger:         #ef4444;
+
+  --bg-page:        #f8fafc;
+  --bg-card:        #ffffff;
+  --bg-subtle:      #f1f5f9;
+  --bg-input:       #ffffff;
+
+  --text-primary:   #0f172a;
+  --text-secondary: #334155;
+  --text-muted:     #94a3b8;
+
+  --border:         #e2e8f0;
+}
+
+/* Reset & base */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 16px;
+  color: var(--text-primary);
+  background: var(--bg-page);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 { margin: 0; }
+p { margin: 0; }
+button { font-family: inherit; cursor: pointer; }
+a { color: var(--primary); }
+
+/* Card utility */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Button utilities */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  transition: background 0.15s, border-color 0.15s, opacity 0.15s;
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  &.btn-sm {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.82rem;
+  }
+
+  &.btn-primary {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+
+    &:hover:not(:disabled) { background: var(--primary-dark); border-color: var(--primary-dark); }
+  }
+
+  &.btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+    border-color: var(--border);
+
+    &:hover:not(:disabled) { background: var(--bg-subtle); }
+  }
+
+  &.btn-success {
+    background: var(--success);
+    color: #fff;
+    border-color: var(--success);
+
+    &:hover:not(:disabled) { background: #059669; border-color: #059669; }
+  }
+
+  &.btn-danger {
+    background: var(--danger);
+    color: #fff;
+    border-color: var(--danger);
+
+    &:hover:not(:disabled) { background: #dc2626; border-color: #dc2626; }
+  }
+}
+
+/* Badge utility */
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--primary);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }

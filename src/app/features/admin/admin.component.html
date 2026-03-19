@@ -1,0 +1,414 @@
+<div class="admin-page">
+
+  <header class="admin-header">
+    <div class="header-left">
+      <button class="btn btn-ghost btn-sm" (click)="goHome()" type="button">&#8592; Home</button>
+      <h1>Admin Panel</h1>
+    </div>
+    <div class="header-actions">
+      @if (activeTab() === 'questions') {
+        <button class="btn btn-ghost btn-sm" (click)="resetToSamples()" type="button">Reset Samples</button>
+        <button class="btn btn-primary" (click)="addNew()" type="button">+ Add Question</button>
+      }
+      <button class="btn btn-ghost btn-sm logout-btn" (click)="logout()" type="button">&#x2192; Sign Out</button>
+    </div>
+  </header>
+
+  <!-- Tabs -->
+  <div class="tab-bar">
+    <button
+      class="tab-btn"
+      [class.active]="activeTab() === 'questions'"
+      (click)="setTab('questions')"
+      type="button"
+    >
+      Question Bank
+      <span class="tab-count">{{ questionService.questions().length }}</span>
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="activeTab() === 'submissions'"
+      (click)="setTab('submissions')"
+      type="button"
+    >
+      Submissions
+      <span class="tab-count">{{ submissionService.submissions().length }}</span>
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="activeTab() === 'candidates'"
+      (click)="setTab('candidates')"
+      type="button"
+    >
+      Candidates
+      <span class="tab-count">{{ candidateService.candidates().length }}</span>
+    </button>
+  </div>
+
+  <!-- ── Questions Tab ── -->
+  @if (activeTab() === 'questions') {
+    <div class="admin-body">
+      <div class="stats-row">
+        <div class="stat-card card">
+          <span class="stat-value">{{ questionService.questions().length }}</span>
+          <span class="stat-label">Total Questions</span>
+        </div>
+        <div class="stat-card card stat-active">
+          <span class="stat-value">{{ activeQuestionCount() }}</span>
+          <span class="stat-label">In Test</span>
+        </div>
+        <div class="stat-card card">
+          <span class="stat-value">{{ countType('theoretical') }}</span>
+          <span class="stat-label">Theoretical</span>
+        </div>
+        <div class="stat-card card">
+          <span class="stat-value">{{ countType('code-snippet') }}</span>
+          <span class="stat-label">Code Snippets</span>
+        </div>
+        <div class="stat-card card">
+          <span class="stat-value">{{ countType('coding-task') }}</span>
+          <span class="stat-label">Coding Tasks</span>
+        </div>
+        <div class="stat-card card">
+          <span class="stat-value">{{ totalPoints() }}</span>
+          <span class="stat-label">Total Points</span>
+        </div>
+      </div>
+
+      <div class="settings-card card">
+        <h3 class="settings-title">Test Settings</h3>
+        <div class="settings-row">
+          <label class="settings-label" for="duration-input">Time Limit</label>
+          <div class="settings-control">
+            <input
+              id="duration-input"
+              type="number"
+              class="duration-input"
+              [value]="durationInput()"
+              min="1"
+              max="480"
+              (input)="durationInput.set(+$any($event.target).value)"
+            />
+            <span class="duration-unit">minutes</span>
+            <button
+              class="btn btn-primary btn-sm"
+              [disabled]="savingDuration() || durationInput() === settingsService.durationMinutes()"
+              (click)="saveDuration()"
+              type="button"
+            >{{ savingDuration() ? 'Saving…' : 'Save' }}</button>
+          </div>
+        </div>
+        <div class="settings-row settings-row-sep">
+          <label class="settings-label">Auto-select</label>
+          <div class="settings-control">
+            <input
+              type="number"
+              class="duration-input"
+              [value]="targetPointsInput()"
+              min="1"
+              (input)="targetPointsInput.set(+$any($event.target).value)"
+            />
+            <span class="duration-unit">pts</span>
+            <button class="btn btn-ghost btn-sm" (click)="autoSelect()" type="button">
+              &#9881; Auto-select
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="list-toolbar">
+        <input
+          class="search-input"
+          type="search"
+          placeholder="Search questions…"
+          [value]="searchQuestions()"
+          (input)="searchQuestions.set($any($event.target).value)"
+        />
+      </div>
+
+      @if (filteredQuestions().length === 0) {
+        <div class="empty-state card">
+          @if (searchQuestions()) {
+            <p>No questions match "{{ searchQuestions() }}".</p>
+          } @else {
+            <p>No questions yet. Add your first question or reset to samples.</p>
+          }
+        </div>
+      }
+
+      @for (group of groupedQuestions(); track group.label) {
+        <div class="question-group">
+          <div class="group-heading" [class]="group.cls">
+            <span class="group-label">{{ group.label }}</span>
+            <span class="group-count">{{ group.questions.length }}</span>
+          </div>
+          <div class="questions-list">
+            @for (q of group.questions; track q.id; let i = $index) {
+              <div class="question-row card" [class.q-inactive]="q.active === false">
+                <div class="q-info">
+                  <span class="q-num">{{ i + 1 }}</span>
+                  <div class="q-details">
+                    <div class="q-title-row">
+                      <span class="q-title">{{ q.title }}</span>
+                    </div>
+                    <span class="q-points">{{ q.points }} points</span>
+                  </div>
+                </div>
+                <div class="q-actions">
+                  <button class="btn btn-ghost btn-sm" (click)="editQuestion(q)" type="button">Edit</button>
+                  <button class="btn btn-danger btn-sm" (click)="confirmDelete(q.id)" type="button">Delete</button>
+                  <label class="toggle-switch" (click)="$event.stopPropagation()">
+                    <input
+                      type="checkbox"
+                      [checked]="q.active !== false"
+                      (change)="toggleActive(q, $any($event.target).checked)"
+                    />
+                    <span class="toggle-track"></span>
+                  </label>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ── Submissions Tab ── -->
+  @if (activeTab() === 'submissions') {
+    <div class="admin-body">
+
+      <div class="list-toolbar">
+        <input
+          class="search-input"
+          type="search"
+          placeholder="Search by candidate name…"
+          [value]="searchSubmissions()"
+          (input)="searchSubmissions.set($any($event.target).value)"
+        />
+        @if (submissionService.submissions().length > 0) {
+          <button class="btn btn-ghost btn-sm" (click)="exportToCsv()" type="button">
+            &#8595; Export CSV
+          </button>
+        }
+      </div>
+
+      @if (submissionService.submissions().length === 0) {
+        <div class="empty-state card">
+          <p>No submissions yet. Results will appear here after candidates complete the test.</p>
+        </div>
+      }
+
+      @if (filteredSubmissions().length === 0 && submissionService.submissions().length > 0) {
+        <div class="empty-state card">
+          <p>No submissions match "{{ searchSubmissions() }}".</p>
+        </div>
+      }
+
+      <div class="submissions-list">
+        @for (sub of filteredSubmissions(); track sub.id) {
+          <div class="submission-card card">
+
+            <!-- Submission header row -->
+            <div class="submission-header" (click)="toggleSubmission(sub.id)">
+              <div class="sub-info">
+                <span class="sub-name">{{ sub.candidateName }}</span>
+                <span class="sub-date">{{ formatDate(sub.submittedAt) }}</span>
+              </div>
+              <div class="sub-meta">
+                <span class="score-chip">
+                  {{ sub.result.totalScore }} / {{ sub.result.maxScore }} pts
+                  <em>(auto-graded)</em>
+                </span>
+                <span class="grade-badge" [class]="getGrade(sub.result.percentage).cls">
+                  {{ getGrade(sub.result.percentage).label }}
+                </span>
+                <span class="pct-badge">{{ sub.result.percentage }}%</span>
+                <button
+                  class="btn btn-danger btn-sm"
+                  (click)="$event.stopPropagation(); confirmDeleteSubmission(sub.id)"
+                  type="button"
+                >Delete</button>
+                <span class="expand-arrow">{{ expandedSubmissionId() === sub.id ? '▲' : '▼' }}</span>
+              </div>
+            </div>
+
+            <!-- Expanded detail -->
+            @if (expandedSubmissionId() === sub.id) {
+              <div class="submission-detail">
+                <div class="detail-meta-row">
+                  <span>Started: {{ formatDate(sub.result.session.startTime) }}</span>
+                  <span>Submitted: {{ formatDate(sub.submittedAt) }}</span>
+                  <span>Duration: {{ sub.result.session.durationMinutes }} min</span>
+                </div>
+
+                <div class="breakdown">
+                  @for (qr of sub.result.questionResults; track qr.question.id; let i = $index) {
+                    <div class="question-result" [class]="resultClass(qr)">
+                      <div class="qr-header">
+                        <div class="qr-meta">
+                          <span class="q-num">Q{{ i + 1 }}</span>
+                          <span class="type-badge type-{{ qr.question.type }}">{{ typeLabel(qr.question.type) }}</span>
+                          @if (isAutoGraded(qr)) {
+                            <span class="result-icon">{{ qr.isCorrect ? '✓' : '✗' }}</span>
+                          } @else {
+                            <span class="manual-badge">Manual Review</span>
+                          }
+                        </div>
+                        <span class="qr-pts">{{ qr.score }} / {{ qr.question.points }} pts</span>
+                      </div>
+                      <p class="qr-title">{{ qr.question.title }}</p>
+                      @if (qr.answer?.answer !== null && qr.answer?.answer !== undefined) {
+                        <div class="answer-display">
+                          <span class="answer-label">Answer:</span>
+                          @if (qr.question.type === 'theoretical' && qr.question.format === 'mcq') {
+                            <span class="answer-value">{{ qr.question.options![$any(qr.answer!.answer)] }}</span>
+                          } @else if (qr.question.type === 'code-snippet') {
+                            <span class="answer-value">{{ qr.question.options[$any(qr.answer!.answer)] }}</span>
+                          } @else {
+                            <pre class="code-answer">{{ qr.answer!.answer }}</pre>
+                          }
+                        </div>
+                      } @else {
+                        <p class="no-answer">Not answered</p>
+                      }
+                      @if (!isAutoGraded(qr)) {
+                        <div class="grade-input-row">
+                          <label class="grade-label">Score:</label>
+                          <input
+                            type="number"
+                            class="grade-input"
+                            [value]="getPendingGrade(sub.id, qr.question.id, qr.score)"
+                            [min]="0"
+                            [max]="qr.question.points"
+                            (change)="setPendingGrade(sub.id, qr.question.id, $any($event.target).value, qr.question.points)"
+                          />
+                          <span class="grade-max">/ {{ qr.question.points }}</span>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+
+                @if (hasManualQuestions(sub)) {
+                  <div class="save-grades-row">
+                    <button
+                      class="btn btn-primary btn-sm"
+                      [disabled]="!hasPendingGrades(sub.id) || savingGrades() === sub.id"
+                      (click)="saveGrades(sub.id)"
+                      type="button"
+                    >{{ savingGrades() === sub.id ? 'Saving…' : 'Save Grades' }}</button>
+                    @if (hasPendingGrades(sub.id)) {
+                      <span class="unsaved-hint">Unsaved changes</span>
+                    }
+                  </div>
+                }
+              </div>
+            }
+
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- ── Candidates Tab ── -->
+  @if (activeTab() === 'candidates') {
+    <div class="admin-body">
+
+      <div class="candidates-info card">
+        @if (candidateService.candidates().length > 0) {
+          <p>Access codes are <strong>required</strong>. Only registered candidates can start the test.</p>
+        } @else {
+          <p>No candidates registered. The test is <strong>open</strong> — anyone with the link can start.</p>
+        }
+      </div>
+
+      <!-- Add candidate -->
+      <div class="add-candidate-row card">
+        <input
+          class="search-input"
+          type="text"
+          placeholder="Candidate full name"
+          [(ngModel)]="newCandidateName"
+          (keydown.enter)="addCandidate()"
+        />
+        <button class="btn btn-primary btn-sm" (click)="addCandidate()" type="button">+ Add</button>
+      </div>
+
+      <!-- Candidate list -->
+      @if (candidateService.candidates().length === 0) {
+        <div class="empty-state card">
+          <p>Add candidates above to restrict test access.</p>
+        </div>
+      }
+
+      <div class="candidates-list">
+        @for (c of candidateService.candidates(); track c.id) {
+          <div class="candidate-row card" [class.c-completed]="c.completed">
+            <div class="c-info">
+              <span class="c-name">{{ c.name }}</span>
+              <span class="c-status-badge" [class.completed]="c.completed">
+                {{ c.completed ? 'Completed' : 'Pending' }}
+              </span>
+            </div>
+            <div class="c-actions">
+              <div class="c-code-group">
+                <span class="c-code">{{ c.code }}</span>
+                <button class="btn btn-ghost btn-sm" (click)="copyCode(c.code)" type="button">Copy</button>
+              </div>
+              <button class="btn btn-danger btn-sm" (click)="removeCandidate(c.id)" type="button">Remove</button>
+            </div>
+          </div>
+        }
+      </div>
+
+    </div>
+  }
+
+  <!-- Question Form Drawer -->
+  @if (showForm()) {
+    <div class="drawer-overlay" (click)="closeForm()">
+      <div class="drawer" (click)="$event.stopPropagation()">
+        <div class="drawer-header">
+          <h2>{{ editingQuestion() ? 'Edit Question' : 'New Question' }}</h2>
+          <button class="close-btn" (click)="closeForm()" type="button">&#10005;</button>
+        </div>
+        <app-question-form
+          [question]="editingQuestion()"
+          (save)="onFormSave($event)"
+          (cancel)="closeForm()"
+        />
+      </div>
+    </div>
+  }
+
+  <!-- Delete Question Modal -->
+  @if (deleteConfirmId()) {
+    <div class="modal-overlay" (click)="cancelDelete()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <h3>Delete Question?</h3>
+        <p>This cannot be undone.</p>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" (click)="cancelDelete()" type="button">Cancel</button>
+          <button class="btn btn-danger" (click)="doDelete()" type="button">Delete</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Delete Submission Modal -->
+  @if (deleteSubmissionId()) {
+    <div class="modal-overlay" (click)="cancelDeleteSubmission()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <h3>Delete Submission?</h3>
+        <p>This will permanently remove the candidate's result.</p>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" (click)="cancelDeleteSubmission()" type="button">Cancel</button>
+          <button class="btn btn-danger" (click)="doDeleteSubmission()" type="button">Delete</button>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

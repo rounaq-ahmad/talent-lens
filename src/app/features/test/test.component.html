@@ -1,0 +1,128 @@
+@if (session()) {
+  <div class="test-page">
+
+    <!-- Header -->
+    <header class="test-header">
+      <div class="header-left">
+        <span class="candidate-name">{{ session()!.candidateName }}</span>
+        <span class="progress-text">
+          Question {{ currentIndex() + 1 }} / {{ questions().length }}
+        </span>
+      </div>
+      <app-timer
+        [durationMinutes]="session()!.durationMinutes"
+        [initialSeconds]="timerInitialSeconds()"
+        (timeUp)="onTimeUp()"
+      />
+    </header>
+
+    <!-- Progress bar -->
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" [style.width.%]="progress()"></div>
+    </div>
+
+    <div class="test-body">
+
+      <!-- Question Navigator -->
+      <aside class="question-nav">
+        <p class="nav-title">Questions</p>
+        <div class="nav-grid">
+          @for (q of questions(); track q.id; let i = $index) {
+            <button
+              class="nav-btn"
+              [class.active]="currentIndex() === i"
+              [class.answered]="(session()!.answers)[q.id] !== undefined"
+              (click)="goTo(i)"
+              type="button"
+            >
+              {{ i + 1 }}
+            </button>
+          }
+        </div>
+        <div class="nav-legend">
+          <span class="legend-item answered-legend">Answered ({{ answeredCount() }})</span>
+          <span class="legend-item">Remaining ({{ questions().length - answeredCount() }})</span>
+        </div>
+      </aside>
+
+      <!-- Question Panel -->
+      <main class="question-panel">
+        @if (currentQuestion(); as q) {
+          <div class="question-card card">
+            <div class="question-meta">
+              <span class="type-badge type-{{ q.type }}">{{ typeLabel(q) }}</span>
+              <span class="points-badge">{{ q.points }} pts</span>
+            </div>
+            <h2 class="question-title">{{ q.title }}</h2>
+
+            @if (q.type === 'theoretical') {
+              <app-theoretical-question
+                [question]="q"
+                [answer]="currentAnswer()"
+                (answerChange)="onAnswerChange($event)"
+              />
+            }
+            @if (q.type === 'code-snippet') {
+              <app-code-snippet-question
+                [question]="q"
+                [answer]="currentAnswer()"
+                (answerChange)="onAnswerChange($event)"
+              />
+            }
+            @if (q.type === 'coding-task') {
+              <app-coding-task
+                [question]="q"
+                [answer]="currentAnswer()"
+                (answerChange)="onAnswerChange($event)"
+              />
+            }
+
+            <!-- Navigation -->
+            <div class="nav-actions">
+              <button
+                class="btn btn-ghost"
+                (click)="prev()"
+                [disabled]="currentIndex() === 0"
+                type="button"
+              >
+                &larr; Previous
+              </button>
+              <div class="nav-right">
+                @if (currentIndex() < questions().length - 1) {
+                  <button class="btn btn-primary" (click)="next()" type="button">
+                    Next &rarr;
+                  </button>
+                } @else {
+                  <button class="btn btn-success" (click)="requestSubmit()" type="button">
+                    Submit Test
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </main>
+    </div>
+
+    <!-- Confirm Submit Modal -->
+    @if (confirmSubmit()) {
+      <div class="modal-overlay" (click)="cancelSubmit()">
+        <div class="modal" (click)="$event.stopPropagation()">
+          <h3>Submit Test?</h3>
+          <p>
+            You have answered <strong>{{ answeredCount() }}</strong> of
+            <strong>{{ questions().length }}</strong> questions.
+            @if (answeredCount() < questions().length) {
+              <span class="warn-text"> {{ questions().length - answeredCount() }} question(s) are unanswered.</span>
+            }
+          </p>
+          <div class="modal-actions">
+            <button class="btn btn-ghost" (click)="cancelSubmit()" type="button">Cancel</button>
+            <button class="btn btn-success" (click)="submit()" type="button">Yes, Submit</button>
+          </div>
+        </div>
+      </div>
+    }
+
+  </div>
+}
